@@ -1,10 +1,8 @@
 pub mod config;
 mod days;
-mod solution;
 
 use std::error::Error;
 use std::time::Instant;
-use solution::Solution;
 
 use crate::config::Config;
 use crate::days::{
@@ -23,14 +21,14 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         Some(p) => {
             println!("\nRunning day {:02}, part {}...", config.day, p);
             let soln = run_part(config.day, p);
-            println!("  - {:?}", soln);
+            println!("  - Solution: {}", soln);
         },
         None => {
             println!("\nRunning day {:02}...", config.day);
             let soln1 = run_part(config.day, 1);
             let soln2 = run_part(config.day, 2);
-            println!("  - Part one: {:?}", soln1);
-            println!("  - Part two: {:?}", soln2);
+            println!("  - Part one: {}", soln1);
+            println!("  - Part two: {}", soln2);
         }
     }
 
@@ -40,63 +38,63 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn run_part(day: u8, part: u8) -> Solution{
+fn run_part(day: u8, part: u8) -> String {
     if part == 1 {
         match day {
-            1 =>  day01::part1(),
-            2 =>  day02::part1(),
-            3 =>  day03::part1(),
-            4 =>  day04::part1(),
-            5 =>  day05::part1(),
-            6 =>  day06::part1(),
-            7 =>  day07::part1(),
-            8 =>  day08::part1(),
-            9 =>  day09::part1(),
-            10 => day10::part1(),
-            11 => day11::part1(),
-            12 => day12::part1(),
-            13 => day13::part1(),
-            14 => day14::part1(),
-            15 => day15::part1(),
-            16 => day16::part1(),
-            17 => day17::part1(),
-            18 => day18::part1(),
-            19 => day19::part1(),
-            20 => day20::part1(),
-            21 => day21::part1(),
-            22 => day22::part1(),
-            23 => day23::part1(),
-            24 => day24::part1(),
-            25 => day25::part1(),
+            1 =>  day01::part1().to_string(),
+            2 =>  day02::part1().to_string(),
+            3 =>  day03::part1().to_string(),
+            4 =>  day04::part1().to_string(),
+            5 =>  day05::part1().to_string(),
+            6 =>  day06::part1().to_string(),
+            7 =>  day07::part1().to_string(),
+            8 =>  day08::part1().to_string(),
+            9 =>  day09::part1().to_string(),
+            10 => day10::part1().to_string(),
+            11 => day11::part1().to_string(),
+            12 => day12::part1().to_string(),
+            13 => day13::part1().to_string(),
+            14 => day14::part1().to_string(),
+            15 => day15::part1().to_string(),
+            16 => day16::part1().to_string(),
+            17 => day17::part1().to_string(),
+            18 => day18::part1().to_string(),
+            19 => day19::part1().to_string(),
+            20 => day20::part1().to_string(),
+            21 => day21::part1().to_string(),
+            22 => day22::part1().to_string(),
+            23 => day23::part1().to_string(),
+            24 => day24::part1().to_string(),
+            25 => day25::part1().to_string(),
             _  => unimplemented!(),
         }
     } else if part == 2 {
         match day {
-            1 =>  day01::part2(),
-            2 =>  day02::part2(),
-            3 =>  day03::part2(),
-            4 =>  day04::part2(),
-            5 =>  day05::part2(),
-            6 =>  day06::part2(),
-            7 =>  day07::part2(),
-            8 =>  day08::part2(),
-            9 =>  day09::part2(),
-            10 => day10::part2(),
-            11 => day11::part2(),
-            12 => day12::part2(),
-            13 => day13::part2(),
-            14 => day14::part2(),
-            15 => day15::part2(),
-            16 => day16::part2(),
-            17 => day17::part2(),
-            18 => day18::part2(),
-            19 => day19::part2(),
-            20 => day20::part2(),
-            21 => day21::part2(),
-            22 => day22::part2(),
-            23 => day23::part2(),
-            24 => day24::part2(),
-            25 => day25::part2(),
+            1 =>  day01::part2().to_string(),
+            2 =>  day02::part2().to_string(),
+            3 =>  day03::part2().to_string(),
+            4 =>  day04::part2().to_string(),
+            5 =>  day05::part2().to_string(),
+            6 =>  day06::part2().to_string(),
+            7 =>  day07::part2().to_string(),
+            8 =>  day08::part2().to_string(),
+            9 =>  day09::part2().to_string(),
+            10 => day10::part2().to_string(),
+            11 => day11::part2().to_string(),
+            12 => day12::part2().to_string(),
+            13 => day13::part2().to_string(),
+            14 => day14::part2().to_string(),
+            15 => day15::part2().to_string(),
+            16 => day16::part2().to_string(),
+            17 => day17::part2().to_string(),
+            18 => day18::part2().to_string(),
+            19 => day19::part2().to_string(),
+            20 => day20::part2().to_string(),
+            21 => day21::part2().to_string(),
+            22 => day22::part2().to_string(),
+            23 => day23::part2().to_string(),
+            24 => day24::part2().to_string(),
+            25 => day25::part2().to_string(),
             _  => unimplemented!(),
         }
     } else {

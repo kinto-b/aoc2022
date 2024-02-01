@@ -1,4 +1,3 @@
-use crate::solution::Solution;
 
 fn elf_totals() -> Vec<i32> {
     include_str!("../../data/day01.txt").
@@ -8,13 +7,13 @@ fn elf_totals() -> Vec<i32> {
 }
 
 
-pub fn part1() -> Solution {
-    Solution { solution: *elf_totals().iter().max().unwrap() }
+pub fn part1() -> i32 {
+    *elf_totals().iter().max().unwrap()
 }
 
-pub fn part2() -> Solution {
+pub fn part2() -> i32 {
     let mut totals = elf_totals();
     totals.sort();
 
-    Solution { solution: totals.iter().rev().take(3).sum() }
+    totals.iter().rev().take(3).sum()
 }

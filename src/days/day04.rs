@@ -1,4 +1,3 @@
-use crate::solution::Solution;
 
 // TODO: Would be nice not to have to do the iter->vec->iter round trip.
 fn parse() -> Vec<[u8; 4]>{
@@ -29,18 +28,14 @@ fn partial_overlap([l1, u1, l2, u2]: &[u8; 4]) -> bool {
 }
 
 /// Count the number of 'contained' pairs
-pub fn part1() -> Solution {
-    let solution = parse().iter()
+pub fn part1() -> usize {
+    parse().iter()
         .filter(|&v| full_overlap(v))
-        .count();
-
-    Solution { solution: solution as i32 }
+        .count()
 }
 
-pub fn part2() -> Solution {
-    let solution = parse().iter()
+pub fn part2() -> usize {
+    parse().iter()
         .filter(|&v| partial_overlap(v))
-        .count();
-
-    Solution { solution: solution as i32 }
+        .count()
 }

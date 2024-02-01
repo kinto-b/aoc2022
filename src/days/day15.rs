@@ -1,13 +1,12 @@
-use crate::solution::Solution;
 
-pub fn part1() -> Solution {
+pub fn part1() -> i32 {
     let solution = 0;
 
-    Solution { solution }
+    solution
 }
 
-pub fn part2() -> Solution {
+pub fn part2() -> i32 {
     let solution = 0;
 
-    Solution { solution }
+    solution
 }

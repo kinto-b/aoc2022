@@ -1,4 +1,3 @@
-use crate::solution::Solution;
 use std::collections::{hash_map::RandomState, HashSet};
 
 /// Returns a tuple of sets representing the compartments
@@ -36,18 +35,16 @@ fn badge_priority(x: &[u8], y: &[u8], z: &[u8]) -> i32 {
 }
 
 /// Sum of bag priorities
-pub fn part1() -> Solution {
-    let solution: i32 = include_bytes!("../../data/day03.txt")
+pub fn part1() -> i32 {
+    include_bytes!("../../data/day03.txt")
         .split(|b| *b == b'\n')
         .map(compartments)
         .map(|(x, y)| bag_priority(x, y))
-        .sum();
-
-    Solution { solution }
+        .sum()
 }
 
 /// Sum of badge priorities
-pub fn part2() -> Solution {
+pub fn part2() -> i32 {
     let mut elves = include_bytes!("../../data/day03.txt")
         .split(|b| *b == b'\n');
 
@@ -57,5 +54,5 @@ pub fn part2() -> Solution {
         solution += badge_priority(e1, elves.next().unwrap(), elves.next().unwrap())
     }
 
-    Solution { solution }
+    solution
 }

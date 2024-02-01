@@ -1,4 +1,3 @@
-use crate::solution::Solution;
 
 #[derive(PartialEq, Eq, Clone)]
 enum Shape {
@@ -72,24 +71,24 @@ fn swap_shape(me: &Shape, elf: &Shape) -> Shape {
     }
 }
 
-pub fn part1() -> Solution {
-    let mut solution: i32 = 0;
+pub fn part1() -> u32 {
+    let mut solution: u32 = 0;
 
     for (elf, me) in read_shapes() {
-        solution += (score_shape(&me) + score_match(&me, &elf)) as i32
+        solution += (score_shape(&me) + score_match(&me, &elf)) as u32
     }
 
-    Solution { solution: solution }
+    solution
 }
 
-pub fn part2() -> Solution {
-    let mut solution: i32 = 0;
+pub fn part2() -> u32 {
+    let mut solution: u32 = 0;
     let mut my_shape: Shape;
 
     for (elf, me) in read_shapes() {
         my_shape = swap_shape(&me, &elf);
-        solution += (score_shape(&my_shape) + score_match(&my_shape, &elf)) as i32
+        solution += (score_shape(&my_shape) + score_match(&my_shape, &elf)) as u32
     }
     
-    Solution { solution: solution }
+    solution
 }

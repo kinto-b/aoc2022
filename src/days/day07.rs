@@ -27,7 +27,7 @@ fn parse() -> BTreeMap<String, u32> {
 
 
 /// Updates path according to the command
-fn change_directory<'a, 'b>(path: &'a mut Vec<String>, commands: &'b str) {
+fn change_directory(path: &mut Vec<String>, commands: &str) {
     for cmd in commands.lines().map(|s| s.replace("$ cd ", "")) {
         match cmd.as_str() {
             ".." => { path.pop(); },

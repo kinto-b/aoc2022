@@ -1,7 +1,3 @@
-//! Counting visible trees
-//! 
-//! Grid is 99x99 with \n\r terminators, so X[i, j] is at x[i*101, j].
-
 const WIDTH: usize = 99;
 
 /// Returns a 99x99 grid stored as a 9801 length vector

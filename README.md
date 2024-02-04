@@ -9,4 +9,6 @@ To run, simply pass the day and (optionally) part to `cargo run`. For example, t
 $ cargo run -- 2 1 
 ```
 
-Note that the time elapsed which gets printed is quite coarse estimate of the actual time the solution takes to run, since it includes the time taken to dispatch to the appropriate function (which itself takes 500-1000µs).
+Note that the time elapsed which gets printed is quite coarse estimate of the actual time the solution takes to run, since it includes the time taken to dispatch to the appropriate function.
+
+A set of timings (from running on an Intel i7-10700 CPU @ 2.90GHz processor) can be found under [benchmark.txt](./benchmark.txt).

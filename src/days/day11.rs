@@ -8,13 +8,12 @@
 //! so there's a decent chance we could speed things up dramatically
 //! using caching.
 
-use std::{collections::VecDeque, fs::read_to_string};
+use std::fs::read_to_string;
 
 // Data class -----------------------------------------------------------------
 /// A monkey holding items which it inspects, throws and catches
-#[derive(Debug)]
 struct Monkey {
-    items: VecDeque<u64>,
+    items: Vec<u64>,
     increment: u64,
     factor: u64,
     power: u32,
@@ -34,7 +33,7 @@ impl Monkey {
 
     /// Return a tuple containing an item and a usize representing another monkey
     fn throw(&mut self) -> Option<(usize, u64)> {
-        let item = self.items.pop_front()?;
+        let item = self.items.pop()?;
         let partner = if item % self.divisor == 0 {
             self.partners.0
         } else {
@@ -46,7 +45,7 @@ impl Monkey {
 
     /// Add an item to the monkeys items
     fn catch(&mut self, item: u64) {
-        self.items.push_back(item)
+        self.items.push(item)
     }
 }
 
@@ -81,10 +80,9 @@ fn parse() -> Vec<Monkey> {
 }
 
 /// Returns a deque containing items
-fn _parse_items(l: &str) -> VecDeque<u64> {
+fn _parse_items(l: &str) -> Vec<u64> {
     l.replace("Starting items:", "")
         .split(',')
-        // .inspect(|x| println!("{x}"))
         .map(|num| num.trim().parse::<u64>().unwrap())
         .collect()
 }

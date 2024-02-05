@@ -1,12 +1,7 @@
-
 pub fn part1() -> i32 {
-    let solution = 0;
-
-    solution
+    0
 }
 
 pub fn part2() -> i32 {
-    let solution = 0;
-
-    solution
+    0
 }

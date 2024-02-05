@@ -4,14 +4,18 @@ use std::collections::{hash_map::RandomState, HashSet};
 fn compartments(x: &[u8]) -> (HashSet<u8>, HashSet<u8>) {
     let (left, right) = x.split_at(x.len() / 2);
     (
-        HashSet::from_iter(left.iter().cloned()), 
-        HashSet::from_iter(right.iter().cloned())
+        HashSet::from_iter(left.iter().cloned()),
+        HashSet::from_iter(right.iter().cloned()),
     )
 }
 
 /// Returns the priority corresponding to a byte character
 fn priority(x: u8) -> i32 {
-    if x <= b'Z' { (x - b'A' + 27) as i32 } else { (x - b'a' + 1) as i32 }
+    if x <= b'Z' {
+        (x - b'A' + 27) as i32
+    } else {
+        (x - b'a' + 1) as i32
+    }
 }
 
 /// Returns bag priority based on contents of left and right compartments
@@ -24,11 +28,11 @@ fn badge_priority(x: &[u8], y: &[u8], z: &[u8]) -> i32 {
     let x: HashSet<u8, RandomState> = HashSet::from_iter(x.iter().cloned());
     let y: HashSet<u8, RandomState> = HashSet::from_iter(y.iter().cloned());
 
-    let badge = z.iter()
+    let badge = z
+        .iter()
         // .filter(|&i| (i >= &b'A') & (i <= &b'z'))
         .filter(|&i| x.contains(i))
-        .filter(|&i| y.contains(i))
-        .next()
+        .find(|&i| y.contains(i))
         .unwrap();
 
     priority(*badge)
@@ -45,8 +49,7 @@ pub fn part1() -> i32 {
 
 /// Sum of badge priorities
 pub fn part2() -> i32 {
-    let mut elves = include_bytes!("../../data/day03.txt")
-        .split(|b| *b == b'\n');
+    let mut elves = include_bytes!("../../data/day03.txt").split(|b| *b == b'\n');
 
     let mut solution = 0;
 

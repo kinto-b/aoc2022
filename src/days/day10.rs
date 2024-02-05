@@ -8,9 +8,8 @@ fn parse() -> Vec<i32> {
     for op in input.lines().map(|l| l.split_once(' ')) {
         let prev = *register.last().unwrap();
         register.push(prev);
-        match op {
-            Some((_, x)) => register.push(x.parse::<i32>().unwrap() + prev),
-            None => (),
+        if let Some((_, x)) = op {
+            register.push(x.parse::<i32>().unwrap() + prev)
         }
     }
 
@@ -41,7 +40,7 @@ pub fn part2() -> String {
     for line in lit.chunks(40) {
         println!("{}", line.iter().collect::<String>())
     }
-    println!("");
+    println!(" ");
 
     String::from("See above")
 }

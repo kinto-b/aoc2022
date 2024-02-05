@@ -3,7 +3,7 @@ const WIDTH: usize = 99;
 /// Returns a 99x99 grid stored as a 9801 length vector
 fn parse() -> Vec<u8> {
     include_bytes!("../../data/day08.txt")
-        .chunks(WIDTH+2) // row plus '\n\r'
+        .chunks(WIDTH + 2) // row plus '\n\r'
         .flat_map(|l| l.strip_suffix(b"\r\n").unwrap_or(l))
         .copied()
         .collect()
@@ -20,28 +20,28 @@ pub fn part1() -> usize {
 
         for j in 0..WIDTH {
             // Moving L-R
-            pos = i*WIDTH + j;
+            pos = i * WIDTH + j;
             if x[pos] > hl {
                 hl = x[pos];
                 visibility[pos] = true;
             }
 
             // Moving R-L
-            pos = i*WIDTH + WIDTH-j-1;
+            pos = i * WIDTH + WIDTH - j - 1;
             if x[pos] > hr {
                 hr = x[pos];
                 visibility[pos] = true;
             }
 
             // Moving T-B
-            pos = j*WIDTH + i;
+            pos = j * WIDTH + i;
             if x[pos] > ht {
                 ht = x[pos];
                 visibility[pos] = true;
             }
 
             // Moving B-T
-            pos = (WIDTH-j-1)*WIDTH + i;
+            pos = (WIDTH - j - 1) * WIDTH + i;
             if x[pos] > hb {
                 hb = x[pos];
                 visibility[pos] = true;
@@ -57,12 +57,13 @@ pub fn part2() -> u32 {
     let x = parse();
 
     let mut max_score = 0;
-    for i in 1..(WIDTH-1) { // Don't need to consider exterior trees
-        for j in 1..(WIDTH-1) {
+    for i in 1..(WIDTH - 1) {
+        // Don't need to consider exterior trees
+        for j in 1..(WIDTH - 1) {
             let score = scenic_score(i, j, &x);
-            if score > max_score { 
+            if score > max_score {
                 max_score = score;
-             };
+            };
         }
     }
 
@@ -70,33 +71,41 @@ pub fn part2() -> u32 {
 }
 
 /// Returns the scenic score at a given position
-fn scenic_score(i: usize, j: usize, x: &Vec<u8>) -> u32 {
-    let h = x[i*WIDTH + j];
+fn scenic_score(i: usize, j: usize, x: &[u8]) -> u32 {
+    let h = x[i * WIDTH + j];
     let [mut l, mut r, mut t, mut b] = [0; 4];
-    
+
     // Moving L-R
-    for k in 1..(WIDTH-j) {
+    for k in 1..(WIDTH - j) {
         l += 1;
-        if h <= x[i*WIDTH + j+k] { break; }
-    }
-    
-    // Moving R-L
-    for k in 1..(j+1) {
-        r += 1;
-        if h <= x[i*WIDTH + j-k] { break; }
-    }
-    
-    // Moving T-B
-    for k in 1..(WIDTH-i) {
-        t += 1;
-        if h <= x[(i+k)*WIDTH + j] { break; }
-    }
-    
-    // Moving B-T
-    for k in 1..(i+1) {
-        b += 1;
-        if h <= x[(i-k)*WIDTH + j] { break; }
+        if h <= x[i * WIDTH + j + k] {
+            break;
+        }
     }
 
-    l*r*t*b
+    // Moving R-L
+    for k in 1..(j + 1) {
+        r += 1;
+        if h <= x[i * WIDTH + j - k] {
+            break;
+        }
+    }
+
+    // Moving T-B
+    for k in 1..(WIDTH - i) {
+        t += 1;
+        if h <= x[(i + k) * WIDTH + j] {
+            break;
+        }
+    }
+
+    // Moving B-T
+    for k in 1..(i + 1) {
+        b += 1;
+        if h <= x[(i - k) * WIDTH + j] {
+            break;
+        }
+    }
+
+    l * r * t * b
 }

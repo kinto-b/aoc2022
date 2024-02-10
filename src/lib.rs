@@ -1,4 +1,5 @@
 pub mod config;
+mod grid;
 mod days;
 
 use std::error::Error;

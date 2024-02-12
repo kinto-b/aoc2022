@@ -6,13 +6,10 @@ type Stack = Vec<char>;
 // Parsing ---------------------------------------------------------------------
 
 fn parse_stacks(x: &str) -> Vec<Stack> {
-    let layers: Vec<Vec<char>> = x.lines()
-        .map(|l| l.chars().collect())
-        .rev()
-        .collect();
+    let layers: Vec<Vec<char>> = x.lines().map(|l| l.chars().collect()).rev().collect();
 
     let nstacks = layers[0].len() / 4;
-    let mut stacks: Vec<Stack> = vec![Vec::new(); nstacks]; 
+    let mut stacks: Vec<Stack> = vec![Vec::new(); nstacks];
 
     // First layer is stack indices, so skip it
     for layer in layers.iter().skip(1) {
@@ -29,27 +26,26 @@ fn parse_stacks(x: &str) -> Vec<Stack> {
 }
 
 fn parse_instructions(x: &str) -> Vec<Instruction> {
-    x.lines()
-        .map(_parse_instruction)
-        .collect()
+    x.lines().map(_parse_instruction).collect()
 }
 
 fn _parse_instruction(x: &str) -> Instruction {
     let x = x[5..] // Instructions begin with 'move '
         .replace("from", "")
         .replace("to", "");
-    
-    let mut m = x.split_whitespace()
-        .map(|v| v.parse::<usize>().unwrap());
 
-    (m.next().unwrap(), m.next().unwrap()-1, m.next().unwrap()-1)
+    let mut m = x.split_whitespace().map(|v| v.parse::<usize>().unwrap());
+
+    (
+        m.next().unwrap(),
+        m.next().unwrap() - 1,
+        m.next().unwrap() - 1,
+    )
 }
 
 fn parse() -> (Vec<Stack>, Vec<Instruction>) {
     let input = read_to_string("data/day05.txt").unwrap();
-    let (stacks, instructions) = input
-        .split_once("\n\r\n")
-        .unwrap();
+    let (stacks, instructions) = input.split_once("\n\r\n").unwrap();
 
     (parse_stacks(stacks), parse_instructions(instructions))
 }
@@ -58,7 +54,7 @@ fn parse() -> (Vec<Stack>, Vec<Instruction>) {
 
 pub fn part1() -> String {
     let (mut stacks, instructions) = parse();
-    
+
     for (n, from, to) in instructions {
         for _ in 0..n {
             let v = stacks[from].pop().unwrap();
@@ -72,7 +68,7 @@ pub fn part1() -> String {
 pub fn part2() -> String {
     let (mut stacks, instructions) = parse();
     let mut collected: Stack = Vec::new(); // To satisfy the borrow checker
-    
+
     for (n, from, to) in instructions {
         let left = stacks[from].len() - n;
         collected.extend(stacks[from].drain(left..));

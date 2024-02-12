@@ -1,4 +1,3 @@
-
 /// Return the index of the first character which is preceeded by `size` unique
 /// characters (inclusive of final character).
 fn locate_marker(size: usize) -> usize {
@@ -7,7 +6,7 @@ fn locate_marker(size: usize) -> usize {
 
     for (i, x) in buffer.iter().enumerate() {
         if let Some(i) = window.iter().position(|w| w == x) {
-            window.drain(..(i+1));
+            window.drain(..(i + 1));
         }
         window.push(*x);
 

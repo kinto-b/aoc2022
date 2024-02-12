@@ -5,11 +5,11 @@ use std::{collections::HashSet, fs::read_to_string};
 /// Convert a step character into a vector (dx, dy)
 fn step(x: &str) -> (i32, i32) {
     match x {
-        "U" => { (0, 1) },
-        "D" => { (0, -1) },
-        "L" => { (-1, 0) },
-        "R" => { (1, 0) },
-        _ => unreachable!()
+        "U" => (0, 1),
+        "D" => (0, -1),
+        "L" => (-1, 0),
+        "R" => (1, 0),
+        _ => unreachable!(),
     }
 }
 
@@ -25,14 +25,14 @@ fn catchup((xh, yh): (i32, i32), (xt, yt): (i32, i32)) -> (i32, i32) {
     }
 }
 
-/// Return the number of locations visited by the tail of a rope with a given 
+/// Return the number of locations visited by the tail of a rope with a given
 /// number of knots whose head follows a given set of directions.
 fn snake(knots: usize) -> usize {
     let directions: String = read_to_string("data/day09.txt").unwrap();
 
-    let (mut x, mut y) = (0, 0);  // Head position
-    let mut rope = vec![(0, 0); knots-1]; // Remaining knots
-    
+    let (mut x, mut y) = (0, 0); // Head position
+    let mut rope = vec![(0, 0); knots - 1]; // Remaining knots
+
     let mut visited: HashSet<(i32, i32)> = HashSet::new();
     visited.insert((x, y));
 
@@ -44,13 +44,16 @@ fn snake(knots: usize) -> usize {
                 x += dx;
                 y += dy;
 
-                rope = rope.iter().scan((x, y), |state, &(u, v)| {
-                    *state = catchup(*state, (u, v));
-                    Some(*state)
-                }).collect();
-                
+                rope = rope
+                    .iter()
+                    .scan((x, y), |state, &(u, v)| {
+                        *state = catchup(*state, (u, v));
+                        Some(*state)
+                    })
+                    .collect();
+
                 visited.insert(*rope.last().unwrap());
-            }            
+            }
         }
     }
 
@@ -62,8 +65,7 @@ pub fn part1() -> usize {
     snake(2)
 }
 
-
 /// Returns the number of places visited by T in a ten-knot rope
 pub fn part2() -> usize {
-    snake(10)   
+    snake(10)
 }

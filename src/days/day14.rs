@@ -19,6 +19,7 @@ const X_OFFSET: usize = 250; // Ensure sand source is at centre of grid
 const GRID_WIDTH: usize = 500;
 const GRID_HEIGHT: usize = 200;
 
+/// Returns a vector containing all the unsigned integers in the string
 fn parse_u32(s: &str) -> Vec<u32> {
     s.as_bytes()
         .split(|b| !b.is_ascii_digit())
@@ -27,6 +28,8 @@ fn parse_u32(s: &str) -> Vec<u32> {
         .collect()
 }
 
+/// Returns a tuple containing a grid representing the positions of the
+/// rock and an integer representing the location of the bottom of the cave.
 fn parse() -> (Grid<bool>, usize) {
     let input = read_to_string("data/day14.txt").unwrap();
     let points = input.lines().map(parse_u32);
@@ -50,6 +53,8 @@ fn parse() -> (Grid<bool>, usize) {
     (grid, bottom as usize)
 }
 
+/// Returns the location a grain of sand comes to rest at after dripping from
+/// the source
 fn drip(grid: &Grid<bool>, bottom: usize) -> Option<(usize, usize)> {
     let (row0, col0) = (0, 500 - X_OFFSET); // Sand source
     let (mut row, mut col) = (row0, col0);
@@ -74,32 +79,35 @@ fn drip(grid: &Grid<bool>, bottom: usize) -> Option<(usize, usize)> {
     Some((row, col))
 }
 
-pub fn part1() -> u32 {
-    let (mut grid, bottom) = parse();
 
+/// Fills the grid by dripping sand from the source until either sand starts
+/// falling away to infinity or sand is backed up to the source, and returns
+/// number of grains of sand taken to fill the grid.
+fn fill(grid: &mut Grid<bool>, bottom: usize) -> u32 {
     let mut count = 0;
-    while let Some((row, col)) = drip(&grid, bottom) {
+    while let Some((row, col)) = drip(grid, bottom) {
         grid.set(row, col, true);
         count += 1;
     }
-
     count
 }
 
-pub fn part2() -> i32 {
+/// Returns the number of grains of sand taken to fill the cave
+pub fn part1() -> u32 {
+    let (mut grid, bottom) = parse();
+    fill(&mut grid, bottom)
+}
+
+/// Returns the number of grains of sand taken to fill the cave with a floor
+pub fn part2() -> u32 {
     let (mut grid, mut bottom) = parse();
 
-    // Add extra row
+    // Add cave floor
     bottom += 2;
     for i in 0..grid.ncol {
         grid.set(bottom, i, true);
     }
 
-    let mut count = 0;
-    while let Some((row, col)) = drip(&grid, bottom) {
-        grid.set(row, col, true);
-        count += 1;
-    }
-
-    count + 1
+    fill(&mut grid, bottom) + 1
 }
+

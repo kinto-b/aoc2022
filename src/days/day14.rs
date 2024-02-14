@@ -11,28 +11,20 @@
 //! 500*200 length vector should be more than enough for both parts.
 
 use std::fs::read_to_string;
-use std::str;
 
 use crate::grid::Grid;
+use crate::parse;
 
 const X_OFFSET: usize = 250; // Ensure sand source is at centre of grid
 const GRID_WIDTH: usize = 500;
 const GRID_HEIGHT: usize = 200;
 
-/// Returns a vector containing all the unsigned integers in the string
-fn parse_u32(s: &str) -> Vec<u32> {
-    s.as_bytes()
-        .split(|b| !b.is_ascii_digit())
-        .filter(|x| !x.is_empty())
-        .map(|x| str::from_utf8(x).unwrap().parse::<u32>().unwrap())
-        .collect()
-}
 
 /// Returns a tuple containing a grid representing the positions of the
 /// rock and an integer representing the location of the bottom of the cave.
 fn parse() -> (Grid<bool>, usize) {
     let input = read_to_string("data/day14.txt").unwrap();
-    let points = input.lines().map(parse_u32);
+    let points = input.lines().map(parse::parse_u32);
 
     let mut grid = Grid::new(vec![false; GRID_WIDTH * GRID_HEIGHT], GRID_HEIGHT);
     let mut bottom = 0;

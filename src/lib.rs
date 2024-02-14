@@ -1,5 +1,6 @@
 pub mod config;
 mod grid;
+mod parse;
 mod days;
 
 use std::error::Error;

@@ -2,47 +2,47 @@
 Running day 01...
   - Part one: 67027
   - Part two: 197291
-  - Elapsed: 217µs
+  - Elapsed: 254µs
 
 Running day 02...
   - Part one: 11063
   - Part two: 10349
-  - Elapsed: 206µs
+  - Elapsed: 194µs
 
 Running day 03...
   - Part one: 7746
   - Part two: 2604
-  - Elapsed: 744µs
+  - Elapsed: 705µs
 
 Running day 04...
   - Part one: 526
   - Part two: 886
-  - Elapsed: 334µs
+  - Elapsed: 323µs
 
 Running day 05...
   - Part one: VJSFHWGFT
   - Part two: LCTQFBVZV
-  - Elapsed: 612µs
+  - Elapsed: 570µs
 
 Running day 06...
   - Part one: 1582
   - Part two: 3588
-  - Elapsed: 139µs
+  - Elapsed: 121µs
 
 Running day 07...
   - Part one: 1555642
   - Part two: 5974547
-  - Elapsed: 1012µs
+  - Elapsed: 956µs
 
 Running day 08...
   - Part one: 1700
   - Part two: 470596
-  - Elapsed: 5548µs
+  - Elapsed: 5334µs
 
 Running day 09...
   - Part one: 6522
   - Part two: 2717
-  - Elapsed: 4039µs
+  - Elapsed: 4193µs
 
 Running day 10...
 
@@ -56,47 +56,47 @@ CRT Screen:
  
   - Part one: 11720
   - Part two: See above
-  - Elapsed: 223µs
+  - Elapsed: 215µs
 
 Running day 11...
   - Part one: 57838
   - Part two: 15050382231
-  - Elapsed: 5131µs
+  - Elapsed: 4954µs
 
 Running day 12...
   - Part one: 423
   - Part two: 416
-  - Elapsed: 797µs
+  - Elapsed: 1078µs
 
 Running day 13...
   - Part one: 4809
   - Part two: 22600
-  - Elapsed: 2112µs
+  - Elapsed: 2023µs
 
 Running day 14...
   - Part one: 763
   - Part two: 23921
-  - Elapsed: 3377µs
+  - Elapsed: 3240µs
 
 Running day 15...
   - Part one: 5108096
   - Part two: 10553942650264
-  - Elapsed: 446µs
+  - Elapsed: 442µs
 
 Running day 16...
-  - Part one: 0
-  - Part two: 0
-  - Elapsed: 76µs
+  - Part one: 1862
+  - Part two: 2422
+  - Elapsed: 14999µs
 
 Running day 17...
   - Part one: 0
   - Part two: 0
-  - Elapsed: 64µs
+  - Elapsed: 66µs
 
 Running day 18...
   - Part one: 0
   - Part two: 0
-  - Elapsed: 80µs
+  - Elapsed: 70µs
 
 Running day 19...
   - Part one: 0
@@ -106,12 +106,12 @@ Running day 19...
 Running day 20...
   - Part one: 0
   - Part two: 0
-  - Elapsed: 67µs
+  - Elapsed: 70µs
 
 Running day 21...
   - Part one: 0
   - Part two: 0
-  - Elapsed: 77µs
+  - Elapsed: 127µs
 
 Running day 22...
   - Part one: 0
@@ -126,9 +126,9 @@ Running day 23...
 Running day 24...
   - Part one: 0
   - Part two: 0
-  - Elapsed: 77µs
+  - Elapsed: 82µs
 
 Running day 25...
   - Part one: 0
   - Part two: 0
-  - Elapsed: 68µs
+  - Elapsed: 97µs

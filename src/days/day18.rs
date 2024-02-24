@@ -1,19 +1,4 @@
 //! Counting cubes
-//!
-//! Cubes are adjacent if two of three coordinates are the same and a third
-//! differs by exactly one. If we sort the cubes by their coordinates and then
-//! iterate along them, we can count if each cube neighbours the following one
-//! by checking if the first two coordinates match and the third differs by
-//! exactly one. Since 'neighbouring' is symmetric, the total number of
-//! neighbours along the third dimension will be equal to twice this count.
-//!
-//! We can do the same for each dimension and then compute the number of exposed
-//! faces as 6C-2a-2b-2c where C is the number of cubes and a, b and c are the
-//! counts along the first second and third dimensions.
-//!
-//! For part two, we'll use a flooding algorithm. Starting from some arbitrary
-//! position outside of the lava droplet, we 'colour' each adjacent cube which
-//! is not a lava droplet.
 
 use std::fs::read_to_string;
 
@@ -120,6 +105,7 @@ pub fn part2() -> usize {
     part1() - neighbours
 }
 
+/// Take the sum of the elements neighbouring a given co-ord
 fn sum_neighbours(grid: &Grid3d, coord: Coord) -> usize {
     let (i, j, k) = coord;
     grid.get((i + 1, j, k)).unwrap()
@@ -130,6 +116,7 @@ fn sum_neighbours(grid: &Grid3d, coord: Coord) -> usize {
         + grid.get((i, j, k - 1)).unwrap()
 }
 
+/// Flood the grid with a given value starting from a given position
 fn flood_fill(grid: &mut Grid3d, start: Coord, with: usize) {
     if grid.get(start) == Some(&0) {
         grid.set(start, with);

@@ -17,89 +17,128 @@
 
 use std::fs::read_to_string;
 
-#[derive(Debug)]
-struct Cube {
-    position: (usize, usize, usize),
+// 3D grid ---------------------------------------------------------------------
+
+type Coord = (usize, usize, usize);
+struct Grid3d {
+    elements: Vec<usize>,
+    dim: (usize, usize, usize),
 }
 
-impl Cube {
-    /// Parse text like "12,1,3" and return a Cube
-    fn parse(l: &str) -> Self {
-        let coord: Vec<usize> = l
-            .split_terminator(',')
-            .map(|x| x.parse::<usize>().unwrap())
-            .collect();
-
-        Cube {
-            position: (coord[0], coord[1], coord[2]),
-        }
+impl Grid3d {
+    /// Returns the element at location (i, j, k) if it exists
+    fn get(&self, coord: Coord) -> Option<&usize> {
+        self.elements.get(self._coord_to_idx(coord))
     }
 
-    /// Rotate position so that (x, y, z) -> (z, x, y)
-    fn rotate_right(&mut self) {
-        let pos = self.position;
-        self.position = (pos.2, pos.0, pos.1)
+    /// Set the value of the element at location (i, j, k).
+    fn set(&mut self, coord: Coord, x: usize) {
+        let idx = self._coord_to_idx(coord);
+        self.elements[idx] = x;
+    }
+
+    /// Convert i,j,k coord to vector index
+    fn _coord_to_idx(&self, (i, j, k): Coord) -> usize {
+        (i * self.dim.1 * self.dim.2) + (j * self.dim.2) + k
     }
 }
 
-fn parse() -> Vec<Cube> {
+// Parse -----------------------------------------------------------------------
+
+fn parse_coord(s: &str) -> Coord {
+    let triplet: Vec<usize> = s
+        .split_terminator(',')
+        .map(|x| x.parse::<usize>().unwrap())
+        .collect();
+    (triplet[0], triplet[1], triplet[2])
+}
+
+/// Return the grid and the coordinates of each droplet cube in the grid
+fn parse() -> (Grid3d, Vec<Coord>) {
     let input = read_to_string("data/day18.txt").unwrap();
-    input.lines().map(Cube::parse).collect()
+    let cubes: Vec<Coord> = input.lines().map(parse_coord).collect();
+
+    // Collect grid dimensions
+    let x = cubes.iter().map(|pt| pt.0).max().unwrap();
+    let y = cubes.iter().map(|pt| pt.1).max().unwrap();
+    let z = cubes.iter().map(|pt| pt.2).max().unwrap();
+
+    // Put droplet cubes into the grid, leaving some space around the outside
+    let elements = vec![0; (x + 3) * (y + 3) * (z + 3)];
+    let mut grid = Grid3d {
+        elements,
+        dim: (x + 3, y + 3, z + 3),
+    };
+
+    // The lowest index in the input is 0, but we want to leave some space
+    for (x, y, z) in &cubes {
+        grid.set((*x + 1, *y + 1, *z + 1), 1);
+    }
+
+    (grid, cubes)
 }
 
 pub fn part1() -> usize {
-    let mut cubes = parse();
-    let cube0 = Cube {
-        position: (99, 99, 99),
-    };
+    let (grid, cubes) = parse();
 
+    // Ignoring surrounding space, count all the neighbours
     let mut neighbours = 0;
-
-    cubes.sort_by_key(|cb| cb.position);
-    neighbours += count_neighbours(&cubes[..], &cube0);
-
-    for cb in cubes.iter_mut() {
-        cb.rotate_right();
-    }
-    cubes.sort_by_key(|cb| cb.position);
-    neighbours += count_neighbours(&cubes[..], &cube0);
-
-    for cb in cubes.iter_mut() {
-        cb.rotate_right();
-    }
-    cubes.sort_by_key(|cb| cb.position);
-    neighbours += count_neighbours(&cubes[..], &cube0);
-
-    (cubes.len() * 6) - 2 * neighbours
-}
-
-fn count_neighbours(cubes: &[Cube], cube0: &Cube) -> usize {
-    cubes
-        .iter()
-        .scan(cube0, |state, cube| {
-            let neighbouring = _neighbours(state, cube);
-            *state = cube;
-
-            if neighbouring {
-                Some(1)
-            } else {
-                Some(0)
+    for i in 1..(grid.dim.0 - 1) {
+        for j in 1..(grid.dim.1 - 1) {
+            for k in 1..(grid.dim.2 - 1) {
+                if grid.get((i, j, k)) == Some(&0) {
+                    continue;
+                }
+                neighbours += sum_neighbours(&grid, (i, j, k))
             }
-        })
-        .sum()
-}
-
-/// Check whether two cubes are neighbouring along their third dimension.
-fn _neighbours(cube1: &Cube, cube2: &Cube) -> bool {
-    let (x1, y1, z1) = &cube1.position;
-    let (x2, y2, z2) = &cube2.position;
-    if (x1 == x2) & (y1 == y2) & (z2 > z1) {
-        z2 - z1 == 1
-    } else {
-        false
+        }
     }
+
+    (cubes.len() * 6) - neighbours
 }
 
-pub fn part2() -> i32 {
-    0
+pub fn part2() -> usize {
+    let (mut grid, _) = parse();
+
+    // First 'colour' the external cubes
+    flood_fill(&mut grid, (0, 0, 0), 2);
+
+    // Next we want to count the neighbours of each *internal* cube
+    // Since internal cubes can only neighbour droplet cubes, we can just
+    // sum the neighbours.
+    let mut neighbours = 0;
+    for i in 1..(grid.dim.0 - 1) {
+        for j in 1..(grid.dim.1 - 1) {
+            for k in 1..(grid.dim.2 - 1) {
+                if grid.get((i, j, k)) == Some(&0) {
+                    neighbours += sum_neighbours(&grid, (i, j, k))
+                }
+            }
+        }
+    }
+
+    part1() - neighbours
+}
+
+fn sum_neighbours(grid: &Grid3d, coord: Coord) -> usize {
+    let (i, j, k) = coord;
+    grid.get((i + 1, j, k)).unwrap()
+        + grid.get((i - 1, j, k)).unwrap()
+        + grid.get((i, j + 1, k)).unwrap()
+        + grid.get((i, j - 1, k)).unwrap()
+        + grid.get((i, j, k + 1)).unwrap()
+        + grid.get((i, j, k - 1)).unwrap()
+}
+
+fn flood_fill(grid: &mut Grid3d, start: Coord, with: usize) {
+    if grid.get(start) == Some(&0) {
+        grid.set(start, with);
+        let (x0, y0, z0) = start;
+        flood_fill(grid, (x0 + 1, y0, z0), with);
+        flood_fill(grid, (x0.saturating_sub(1), y0, z0), with);
+        flood_fill(grid, (x0, y0 + 1, z0), with);
+        flood_fill(grid, (x0, y0.saturating_sub(1), z0), with);
+        flood_fill(grid, (x0, y0, z0 + 1), with);
+        flood_fill(grid, (x0, y0, z0.saturating_sub(1)), with);
+    }
 }

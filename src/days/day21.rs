@@ -4,32 +4,27 @@
 //! caching the computed values as we go. The hardest part about
 //! this is satisfying the borrow checker.
 //!
-//! In theory, this shouldn't work for part two, because we
-//! could end up with a complex polynomial in `humn`. Since
-//! the solution doesn't help us to identify that polynomial,
-//! finding its root would be matter of scanning through
-//! (-inf, inf).
-//!
-//! Fortunately, the polynomial we end up with is of order one.
-//! It should, therefore, be possible to come up with a closed
-//! form solution using at most three points.
-//!
-//! I'm at the pub right now, so instead of trying to solve
-//! the system of equations simultaneously, I'll just use a
-//! binary search algorithm. This works because the effect of
-//! a change in `humn` will be monotonic on the output.
+//! Originally I solved part two using a binary search, which was
+//! fairly quick, but we can do even better. Since each of the
+//! computation involves exactly two terms, we have a binary tree.
+//! And since `humn` is referenced only once, at each node in the
+//! tree, at most one of the branches can include `humn`, which
+//! is the only unknown. So we can divide and conquer! To balance
+//! the root, we need lhs0-rhs0=0. If `humn` is in the rhs, then
+//! lhs is known, and so we know the value we need for `rhs`. To
+//! balance `rhs`, we need lhs1-rhs1=lhs0. &c.
 
 use std::{collections::HashMap, fs::read_to_string};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 struct Monkey<'a> {
-    value: Option<f64>,
+    value: Option<i64>,
     formula: Option<(&'a str, &'a str, &'a str)>,
 }
 
 impl<'a> Monkey<'a> {
     fn parse(s: &'a str) -> Monkey<'a> {
-        let value = s.parse::<f64>();
+        let value = s.parse::<i64>();
 
         match value {
             Ok(x) => Monkey {
@@ -54,12 +49,9 @@ struct MonkeyGang<'a> {
 }
 
 impl MonkeyGang<'_> {
-    fn find(&self, name: &str) -> Option<&usize> {
-        self.directory.get(name)
-    }
-
-    fn eval(&mut self, name: &str) -> f64 {
-        let idx = *self.find(name).unwrap();
+    /// Return the value of the monkey with the provided name
+    fn eval(&mut self, name: &str) -> i64 {
+        let idx = self._find(name);
 
         let value = match self.monkeys[idx].value {
             None => {
@@ -72,14 +64,95 @@ impl MonkeyGang<'_> {
         self.monkeys[idx].value = Some(value); // Cache the value
         value
     }
+
+    /// Return the value of `humn` needed to balance the root node.
+    fn balance(&mut self) -> i64 {
+        self._reset_humn();
+
+        let iroot = self._find("root");
+        let (lhs, _, rhs) = self.monkeys[iroot].formula.unwrap();
+        self.monkeys[iroot] = Monkey {
+            value: None,
+            formula: Some((lhs, "-", rhs)),
+        };
+
+        self._balance_node("root", 0)
+    }
+
+    fn _balance_node(&mut self, name: &str, z: i64) -> i64 {
+        let idx = self._find(name);
+
+        match self.monkeys[idx].formula {
+            Some((lhs, op, rhs)) => {
+                let ldx = self._find(lhs);
+                let rdx = self._find(rhs);
+
+                if let Some(x) = self.monkeys[ldx].value {
+                    self._balance_node(rhs, solve_for_y(op, z, x))
+                } else if let Some(y) = self.monkeys[rdx].value {
+                    self._balance_node(lhs, solve_for_x(op, z, y))
+                } else {
+                    unreachable!()
+                }
+            }
+            None => z,
+        }
+    }
+
+    /// Set to None the values of all nodes in the branch that leads to `humn`
+    fn _reset_humn(&mut self) {
+        let humn_idx = self._find("humn");
+        self._reset_node("root", humn_idx);
+    }
+
+    /// Check if a node is in a branch leading to `humn` and set its value to None if so
+    fn _reset_node(&mut self, name: &str, humn_idx: usize) -> bool {
+        let idx = self._find(name);
+
+        let mut reset = idx == humn_idx;
+
+        if let Some((lhs, _, rhs)) = self.monkeys[idx].formula {
+            reset = self._reset_node(lhs, humn_idx) || self._reset_node(rhs, humn_idx)
+        }
+
+        if reset {
+            self.monkeys[idx].value = None;
+        }
+
+        reset
+    }
+
+    /// Return the index of the monkey with the given name
+    fn _find(&self, name: &str) -> usize {
+        *self.directory.get(name).unwrap()
+    }
 }
 
-fn combine(op: &str, x: f64, y: f64) -> f64 {
+fn combine(op: &str, x: i64, y: i64) -> i64 {
     match op {
         "+" => x + y,
         "-" => x - y,
         "*" => x * y,
         "/" => x / y,
+        _ => unreachable!(),
+    }
+}
+
+fn solve_for_x(op: &str, z: i64, y: i64) -> i64 {
+    match op {
+        "+" => z - y,
+        "-" => z + y,
+        "*" => z / y,
+        "/" => z * y,
+        _ => unreachable!(),
+    }
+}
+fn solve_for_y(op: &str, z: i64, x: i64) -> i64 {
+    match op {
+        "+" => z - x,
+        "-" => x - z,
+        "*" => z / x,
+        "/" => x / z,
         _ => unreachable!(),
     }
 }
@@ -98,70 +171,15 @@ fn parse(input: &'_ str) -> MonkeyGang<'_> {
     MonkeyGang { monkeys, directory }
 }
 
-pub fn part1() -> f64 {
+pub fn part1() -> i64 {
     let input = read_to_string("data/day21.txt").unwrap();
     let mut monkeys = parse(&input);
-
     monkeys.eval("root")
 }
 
-pub fn part2() -> f64 {
+pub fn part2() -> i64 {
     let input = read_to_string("data/day21.txt").unwrap();
     let mut gang = parse(&input);
-
-    // Corrections
-    let iroot = *gang.find("root").unwrap();
-    let (lhs, _, rhs) = gang.monkeys[iroot].formula.unwrap();
-    gang.monkeys[iroot] = Monkey {
-        value: None,
-        formula: Some((lhs, "-", rhs)),
-    };
-
-    // Record monkeys
-    let monkeys0 = gang.monkeys.clone();
-
-    // First find boundaries to search within
-    let x1 = 0.0;
-    let y1 = test(&mut gang, x1);
-
-    let mut delta = 1_000_000.0;
-    let mut x2 = x1 + delta;
-    gang.monkeys = monkeys0.clone();
-    let mut y2 = test(&mut gang, x2);
-
-    if y2.abs() > y1.abs() {
-        delta *= -1.0; // Wrong way, go back!
-    }
-
-    while y2.signum() == y1.signum() {
-        gang.monkeys = monkeys0.clone();
-        x2 += delta;
-        y2 = test(&mut gang, x2);
-        delta *= 2.0;
-    }
-
-    // Now binary search within bounds
-    let mut lwr = if y1 < y2 { x1 } else { x2 };
-    let mut upr = if y1 < y2 { x2 } else { x1 };
-    loop {
-        gang.monkeys = monkeys0.clone();
-        let xx = (lwr + upr) / 2.0;
-        let yy = test(&mut gang, xx);
-
-        match yy {
-            b if b > 0.0 => upr = xx,
-            b if b < 0.0 => lwr = xx,
-            _ => return xx,
-        }
-    }
-}
-
-fn test(gang: &mut MonkeyGang, humn: f64) -> f64 {
-    let ihumn = *gang.find("humn").unwrap();
-    gang.monkeys[ihumn] = Monkey {
-        value: Some(humn),
-        formula: None,
-    };
-
-    gang.eval("root")
+    gang.eval("root");
+    gang.balance()
 }

@@ -18,22 +18,18 @@
 //! the system of equations simultaneously, I'll just use a
 //! binary search algorithm. This works because the effect of
 //! a change in `humn` will be monotonic on the output.
-//!
-//! TODO: Unfortunately this solution is unstable because
-//! of the data loss associated with integer division! I'll
-//! have to implement the closed form solution later on.
 
 use std::{collections::HashMap, fs::read_to_string};
 
 #[derive(Clone)]
 struct Monkey<'a> {
-    value: Option<i64>,
+    value: Option<f64>,
     formula: Option<(&'a str, &'a str, &'a str)>,
 }
 
 impl<'a> Monkey<'a> {
     fn parse(s: &'a str) -> Monkey<'a> {
-        let value = s.parse::<i64>();
+        let value = s.parse::<f64>();
 
         match value {
             Ok(x) => Monkey {
@@ -62,7 +58,7 @@ impl MonkeyGang<'_> {
         self.directory.get(name)
     }
 
-    fn eval(&mut self, name: &str) -> i64 {
+    fn eval(&mut self, name: &str) -> f64 {
         let idx = *self.find(name).unwrap();
 
         let value = match self.monkeys[idx].value {
@@ -78,7 +74,7 @@ impl MonkeyGang<'_> {
     }
 }
 
-fn combine(op: &str, x: i64, y: i64) -> i64 {
+fn combine(op: &str, x: f64, y: f64) -> f64 {
     match op {
         "+" => x + y,
         "-" => x - y,
@@ -102,14 +98,14 @@ fn parse(input: &'_ str) -> MonkeyGang<'_> {
     MonkeyGang { monkeys, directory }
 }
 
-pub fn part1() -> i64 {
+pub fn part1() -> f64 {
     let input = read_to_string("data/day21.txt").unwrap();
     let mut monkeys = parse(&input);
 
     monkeys.eval("root")
 }
 
-pub fn part2() -> i64 {
+pub fn part2() -> f64 {
     let input = read_to_string("data/day21.txt").unwrap();
     let mut gang = parse(&input);
 
@@ -125,23 +121,23 @@ pub fn part2() -> i64 {
     let monkeys0 = gang.monkeys.clone();
 
     // First find boundaries to search within
-    let x1 = 0;
+    let x1 = 0.0;
     let y1 = test(&mut gang, x1);
 
-    let mut delta = 1_000_000;
+    let mut delta = 1_000_000.0;
     let mut x2 = x1 + delta;
     gang.monkeys = monkeys0.clone();
     let mut y2 = test(&mut gang, x2);
 
     if y2.abs() > y1.abs() {
-        delta *= -1; // Wrong way, go back!
+        delta *= -1.0; // Wrong way, go back!
     }
 
     while y2.signum() == y1.signum() {
         gang.monkeys = monkeys0.clone();
         x2 += delta;
         y2 = test(&mut gang, x2);
-        delta *= 2;
+        delta *= 2.0;
     }
 
     // Now binary search within bounds
@@ -149,18 +145,18 @@ pub fn part2() -> i64 {
     let mut upr = if y1 < y2 { x2 } else { x1 };
     loop {
         gang.monkeys = monkeys0.clone();
-        let xx = (lwr + upr) / 2;
+        let xx = (lwr + upr) / 2.0;
         let yy = test(&mut gang, xx);
 
         match yy {
-            b if b > 0 => upr = xx,
-            b if b < 0 => lwr = xx,
+            b if b > 0.0 => upr = xx,
+            b if b < 0.0 => lwr = xx,
             _ => return xx,
         }
     }
 }
 
-fn test(gang: &mut MonkeyGang, humn: i64) -> i64 {
+fn test(gang: &mut MonkeyGang, humn: f64) -> f64 {
     let ihumn = *gang.find("humn").unwrap();
     gang.monkeys[ihumn] = Monkey {
         value: Some(humn),
